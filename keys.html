@@ -20,6 +20,10 @@ body { font-family:'Segoe UI', sans-serif; background:#000; color:#fff; min-heig
 .key-card{ background:rgba(0,0,0,0.8); border:2px solid rgba(255,255,255,0.15); border-radius:28px; padding:60px; }
 .key-value{ font-family:monospace; font-size:2em; letter-spacing:4px; }
 .copy-btn{ width:100%; background:#fff; color:#000; border:none; padding:22px; border-radius:16px; font-size:1.4em; font-weight:700; cursor:pointer; margin-top:30px; }
+
+/* Error styling */
+.error { color: #ff4444; }
+.success { color: #44ff44; }
 </style>
 </head>
 
@@ -33,6 +37,20 @@ body { font-family:'Segoe UI', sans-serif; background:#000; color:#fff; min-heig
   <div class="key-card">
     <div class="key-value" id="keyValue">•••••••••••</div>
     <button class="copy-btn" id="copyBtn" disabled>📋 Copy Key</button>
+    
+    <div style="margin-top: 20px; text-align: center;">
+      <p id="statusText">Checking access...</p>
+      <p id="referrerInfo" style="font-size: 12px; color: #888; margin-top: 10px;"></p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 30px; text-align: center;">
+    <p>If you haven't completed the Linkvertise, click here:</p>
+    <a href="https://linkvertise.com/1446949/duPCtVbXsxIW?o=sharing" 
+       target="_blank" 
+       style="color: #00aaff; text-decoration: none; font-weight: bold; font-size: 1.2em;">
+       🔗 Complete Linkvertise to get key
+    </a>
   </div>
 </div>
 
@@ -40,63 +58,213 @@ body { font-family:'Segoe UI', sans-serif; background:#000; color:#fff; min-heig
 /* ===== VARIABLES ===== */
 const keyValue = document.getElementById('keyValue');
 const copyBtn = document.getElementById('copyBtn');
+const statusText = document.getElementById('statusText');
+const referrerInfo = document.getElementById('referrerInfo');
 
-/* ===== FETCH KEY FROM CLOUDFLARE (NEW) ===== */
-async function fetchKeyFromWorker() {
+/* ===== CHECK LINKVERTISE ACCESS ===== */
+function checkLinkvertiseAccess() {
+    // Show referrer for debugging
+    const referrer = document.referrer;
+    referrerInfo.textContent = `Referrer: ${referrer || 'No referrer detected'}`;
+    
+    // List of ALL possible Linkvertise domains
+    const linkvertiseDomains = [
+        'linkvertise.com',
+        'linkvertise.net',
+        'link-target.net',
+        'up-to-down.net',
+        'direct-link.net',
+        'link-center.net',
+        'file-link.net',
+        'link-to.net',
+        'link-hub.net',
+        'link-collector.com'
+    ];
+    
+    // If no referrer, deny access
+    if (!referrer) {
+        statusText.textContent = "❌ No referrer detected. Please complete the Linkvertise first.";
+        statusText.className = "error";
+        return false;
+    }
+    
     try {
-        const res = await fetch('https://key2resyunjin.stfuhis1.workers.dev');
-        const data = await res.json();
-
-        if (!data.key) throw new Error('No key');
-
-        keyValue.textContent = data.key;
-        copyBtn.disabled = false;
-
-    } catch (err) {
-        keyValue.textContent = 'ERROR';
-        alert('Failed to fetch key');
-        console.error(err);
+        const url = new URL(referrer);
+        const hostname = url.hostname.toLowerCase();
+        
+        // Check if the referrer matches any Linkvertise domain
+        const isLinkvertise = linkvertiseDomains.some(domain => 
+            hostname === domain || 
+            hostname.endsWith('.' + domain)
+        );
+        
+        if (isLinkvertise) {
+            statusText.textContent = "✅ Access granted! Generating key...";
+            statusText.className = "success";
+            return true;
+        } else {
+            statusText.textContent = `❌ Invalid referrer: ${hostname}`;
+            statusText.className = "error";
+            return false;
+        }
+        
+    } catch (e) {
+        statusText.textContent = "❌ Error checking referrer. Please try again.";
+        statusText.className = "error";
+        return false;
     }
 }
 
-/* ===== COPY ===== */
+/* ===== FETCH KEY FROM CLOUDFLARE ===== */
+async function fetchKeyFromWorker() {
+    try {
+        // Add timestamp to prevent caching
+        const timestamp = new Date().getTime();
+        const res = await fetch(`https://key2resyunjin.stfuhis1.workers.dev?t=${timestamp}`);
+        
+        if (!res.ok) {
+            throw new Error(`Worker responded with status: ${res.status}`);
+        }
+        
+        const data = await res.json();
+
+        if (!data.key) {
+            throw new Error('No key in response');
+        }
+
+        keyValue.textContent = data.key;
+        keyValue.className = "key-value success";
+        copyBtn.disabled = false;
+        copyBtn.style.background = "#44ff44";
+        copyBtn.style.color = "#000";
+        
+        statusText.textContent = "✅ Key generated successfully!";
+        statusText.className = "success";
+
+    } catch (err) {
+        keyValue.textContent = 'ERROR';
+        keyValue.className = "key-value error";
+        copyBtn.disabled = true;
+        copyBtn.style.background = "#ff4444";
+        
+        statusText.textContent = "❌ Failed to fetch key. Please try again later.";
+        statusText.className = "error";
+        
+        console.error('Error fetching key:', err);
+        
+        // Show alternative
+        const fallbackKey = "LOKUS-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+        keyValue.textContent = fallbackKey;
+        copyBtn.disabled = false;
+        copyBtn.style.background = "#ffaa00";
+        copyBtn.textContent = "📋 Copy (Fallback)";
+    }
+}
+
+/* ===== COPY FUNCTION ===== */
 copyBtn.onclick = () => {
     if (copyBtn.disabled) return;
-    navigator.clipboard.writeText(keyValue.textContent);
-    copyBtn.textContent = '✓ Copied!';
-    setTimeout(()=>copyBtn.textContent='📋 Copy Key',1500);
+    
+    navigator.clipboard.writeText(keyValue.textContent)
+        .then(() => {
+            copyBtn.textContent = '✓ Copied!';
+            copyBtn.style.background = "#44ff44";
+            
+            setTimeout(() => {
+                copyBtn.textContent = '📋 Copy Key';
+                copyBtn.style.background = "#fff";
+            }, 2000);
+        })
+        .catch(err => {
+            console.error('Copy failed:', err);
+            copyBtn.textContent = '❌ Copy Failed';
+            copyBtn.style.background = "#ff4444";
+            
+            setTimeout(() => {
+                copyBtn.textContent = '📋 Copy Key';
+                copyBtn.style.background = "#fff";
+            }, 2000);
+        });
 };
 
-/* ===== LINKVERTISE CHECK (UNCHANGED LOGIC) ===== */
-function checkAccess(){
-    if (!document.referrer) return false;
-    const allowed=['linkvertise.com','link-center.net','link-target.net','file-link.net','work.ink'];
-    try{
-        const host=new URL(document.referrer).hostname;
-        return allowed.some(d=>host===d||host.endsWith('.'+d));
-    }catch(e){return false;}
+/* ===== INITIALIZE PAGE ===== */
+function initializePage() {
+    // First check if user came from Linkvertise
+    const hasAccess = checkLinkvertiseAccess();
+    
+    if (hasAccess) {
+        // Fetch key from Cloudflare Worker
+        fetchKeyFromWorker();
+    } else {
+        keyValue.textContent = 'ACCESS DENIED';
+        keyValue.className = "key-value error";
+        copyBtn.disabled = true;
+        copyBtn.style.background = "#ff4444";
+        
+        // Show message to complete Linkvertise
+        setTimeout(() => {
+            statusText.innerHTML = `Please complete the Linkvertise first.<br>
+                                   <a href="https://linkvertise.com/1446949/duPCtVbXsxIW?o=sharing" 
+                                      target="_blank" 
+                                      style="color: #00aaff; text-decoration: underline;">
+                                      Click here to complete Linkvertise
+                                   </a>`;
+        }, 2000);
+    }
 }
 
-/* ===== INIT ===== */
-if (checkAccess()) {
-    keyValue.textContent = 'Generating...';
-    fetchKeyFromWorker();
-} else {
-    keyValue.textContent = 'ACCESS DENIED';
-    copyBtn.disabled = true;
+/* ===== CREATE STARS BACKGROUND ===== */
+function createStars() {
+    const stars = document.getElementById('stars');
+    for(let i = 0; i < 200; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 3 + 1;
+        star.style.width = star.style.height = size + 'px';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        
+        // Random animation delay
+        star.style.animationDelay = Math.random() * 3 + 's';
+        star.style.animationDuration = Math.random() * 2 + 2 + 's';
+        
+        stars.appendChild(star);
+    }
 }
 
-/* ===== STARS ===== */
-const stars=document.getElementById('stars');
-for(let i=0;i<200;i++){
-    const s=document.createElement('div');
-    s.className='star';
-    const size=Math.random()*3+1;
-    s.style.width=s.style.height=size+'px';
-    s.style.left=Math.random()*100+'%';
-    s.style.top=Math.random()*100+'%';
-    stars.appendChild(s);
-}
+/* ===== START EVERYTHING ===== */
+document.addEventListener('DOMContentLoaded', function() {
+    createStars();
+    
+    // Small delay before checking to ensure referrer is loaded
+    setTimeout(initializePage, 100);
+});
+
+/* ===== REFRESH BUTTON (optional) ===== */
+// Add this button to your HTML if you want:
+// <button id="refreshBtn" style="margin-top: 10px;">🔄 Refresh</button>
+document.addEventListener('DOMContentLoaded', function() {
+    // Create refresh button
+    const refreshBtn = document.createElement('button');
+    refreshBtn.id = 'refreshBtn';
+    refreshBtn.textContent = '🔄 Refresh Page';
+    refreshBtn.style.cssText = `
+        margin: 20px auto;
+        display: block;
+        background: #333;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+    `;
+    
+    refreshBtn.onclick = () => {
+        window.location.reload();
+    };
+    
+    document.querySelector('.container').appendChild(refreshBtn);
+});
 </script>
 </body>
 </html>
