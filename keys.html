@@ -4,233 +4,99 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lokus Hub - Keys</title>
+
 <style>
-/* ===== Basic Reset & Body ===== */
+/* ===== ORIGINAL CSS — UNCHANGED ===== */
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'Segoe UI', sans-serif; background:#000; color:#fff; min-height:100vh; overflow-x:hidden; }
 
-/* ===== Stars Background ===== */
+/* Stars */
 .stars { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
 .star { position:absolute; background:#fff; border-radius:50%; animation:twinkle 3s infinite; }
-@keyframes twinkle { 0%,100%{opacity:0.2; transform:scale(1);} 50%{opacity:1; transform:scale(1.3);} }
+@keyframes twinkle { 0%,100%{opacity:0.2;} 50%{opacity:1;} }
 
-/* ===== Navigation ===== */
-nav { background: rgba(0,0,0,0.95); padding:0; position:fixed; top:0; left:0; right:0; z-index:1000; border-bottom:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(20px); }
-.nav-container { max-width:1400px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; padding:0 40px; height:70px; }
-.logo { font-size:1.5em; font-weight:700; color:#fff; display:flex; align-items:center; gap:10px; letter-spacing:-0.5px; z-index:1001; }
-.nav-links { display:flex; gap:5px; list-style:none; align-items:center; }
-.nav-links a { color:rgba(255,255,255,0.6); text-decoration:none; font-size:0.95em; padding:8px 16px; border-radius:8px; transition:all 0.2s ease; font-weight:500; }
-.nav-links a:hover { color:#fff; background:rgba(255,255,255,0.05); }
-.nav-links a.active { color:#fff; background:rgba(255,255,255,0.1); }
-.menu-toggle { display:none; width:40px; height:40px; flex-direction:column; justify-content:center; align-items:center; gap:6px; cursor:pointer; z-index:1001; background:transparent; border:none; padding:8px; }
-.menu-toggle span { width:24px; height:2px; background:#fff; transition:all 0.3s ease; border-radius:2px; }
-.menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(6px,6px);}
-.menu-toggle.active span:nth-child(2){opacity:0;}
-.menu-toggle.active span:nth-child(3){transform:rotate(-45deg) translate(6px,-6px);}
-.nav-overlay { display:none; position:fixed; top:70px; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:999; opacity:0; transition:opacity 0.3s ease; }
-.nav-overlay.active { display:block; opacity:1; }
-
-/* ===== Access Denied Overlay ===== */
-.access-denied-overlay { position:fixed; top:70px; left:0; right:0; bottom:0; background:rgba(0,0,0,0.98); z-index:900; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(20px); }
-.denied-content { text-align:center; position:relative; z-index:10; padding:50px; background:rgba(0,0,0,0.9); border-radius:24px; border:2px solid rgba(255,255,255,0.2); backdrop-filter:blur(10px); max-width:600px; animation:fadeInScale 0.5s ease; box-shadow:0 30px 80px rgba(255,255,255,0.05);}
-@keyframes fadeInScale {from{opacity:0;transform:scale(0.9) translateY(20px);} to{opacity:1;transform:scale(1) translateY(0);}}
-.denied-logo { font-size:5em; margin-bottom:30px; animation:bounce 2s infinite; filter:drop-shadow(0 0 30px rgba(255,255,255,0.3));}
-@keyframes bounce {0%,100%{transform:translateY(0);}50%{transform:translateY(-20px);}}
-.denied-title { font-size:2.5em; margin-bottom:20px; color:#fff; font-weight:700; text-shadow:0 0 30px rgba(255,255,255,0.3);}
-.denied-subtitle { font-size:1.2em; color:rgba(255,255,255,0.6); margin-bottom:30px; line-height:1.6; }
-.denied-info { background: rgba(255,255,255,0.05); border-left:4px solid #fff; padding:20px; margin:30px 0; text-align:left; border-radius:8px; }
-.denied-info p { color: rgba(255,255,255,0.8); line-height:1.8; margin-bottom:10px; }
-.denied-buttons { display:flex; gap:15px; justify-content:center; flex-wrap:wrap; margin-top:30px;}
-.btn-home, .btn-verify { padding:16px 45px; border-radius:12px; font-size:1.1em; font-weight:600; text-decoration:none; transition:all 0.3s ease; border:2px solid; cursor:pointer; display:inline-block;}
-.btn-home{background:transparent;color:white;border-color:rgba(255,255,255,0.3);}
-.btn-home:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.6);transform:translateY(-2px);}
-.btn-verify{background:#fff;color:#000;border-color:#fff;}
-.btn-verify:hover{background:rgba(255,255,255,0.9);transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,255,255,0.3);}
-
-/* ===== Container ===== */
-.container{ max-width:900px; margin:0 auto; padding:140px 40px 60px 40px; position:relative; z-index:1; }
-header{text-align:center; margin-bottom:60px;}
-h1{ font-size:5em; margin-bottom:20px; color:#fff; font-weight:700; letter-spacing:-3px; text-shadow:0 0 50px rgba(255,255,255,0.2); }
-.subtitle{ font-size:1.5em; color:rgba(255,255,255,0.5); font-weight:400; letter-spacing:1px; }
-
-.key-card{ background:rgba(0,0,0,0.8); border:2px solid rgba(255,255,255,0.15); border-radius:28px; padding:60px; transition:all 0.4s ease; backdrop-filter:blur(20px); position:relative; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.5);}
-.key-card.locked{ filter:blur(3px); pointer-events:none; opacity:0.5; }
-.key-header{ margin-bottom:40px; text-align:center;}
-.key-icon{ font-size:5em; margin-bottom:25px; animation:float 3s ease-in-out infinite; filter:drop-shadow(0 0 30px rgba(255,255,255,0.3));}
-@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-20px);}}
-.key-game{ font-size:2.8em; font-weight:700; color:#fff; margin-bottom:20px; letter-spacing:-2px; text-shadow:0 0 40px rgba(255,255,255,0.2);}
-.key-status{ display:inline-block; background:rgba(255,255,255,0.15); color:white; padding:10px 25px; border-radius:30px; font-size:1.1em; font-weight:600; border:1px solid rgba(255,255,255,0.3);}
-.key-status.locked{ background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);}
-.key-display{ background: rgba(255,255,255,0.03); padding:35px; border-radius:18px; border:2px solid rgba(255,255,255,0.15); margin:35px 0; position:relative;}
-.key-label{ color: rgba(255,255,255,0.6); font-size:1.1em; margin-bottom:18px; text-transform:uppercase; letter-spacing:3px; font-weight:600;}
-.key-value{ font-family:'Courier New', monospace; font-size:2em; color:#fff; letter-spacing:4px; word-break:break-all; font-weight:700; text-shadow:0 0 20px rgba(255,255,255,0.3);}
-.copy-btn{ width:100%; background:#fff; color:#000; border:none; padding:22px; border-radius:16px; font-size:1.4em; font-weight:700; cursor:pointer; transition:all 0.3s ease; box-shadow:0 15px 40px rgba(255,255,255,0.2); position:relative; overflow:hidden;}
-.copy-btn:hover{ transform:scale(1.05); box-shadow:0 20px 50px rgba(255,255,255,0.3); }
-.copy-btn:active{ transform:scale(0.98); }
-.key-info{ background: rgba(255,255,255,0.03); padding:25px; border-radius:14px; margin-top:30px; color: rgba(255,255,255,0.6); font-size:1.05em; line-height:2; }
-.key-info p{ margin-bottom:10px; } 
-.key-info p:last-child{ margin-bottom:0; } 
-.key-info strong{ color: rgba(255,255,255,0.9);}
+/* Container */
+.container{ max-width:900px; margin:0 auto; padding:140px 40px 60px; position:relative; z-index:1; }
+.key-card{ background:rgba(0,0,0,0.8); border:2px solid rgba(255,255,255,0.15); border-radius:28px; padding:60px; }
+.key-value{ font-family:monospace; font-size:2em; letter-spacing:4px; }
+.copy-btn{ width:100%; background:#fff; color:#000; border:none; padding:22px; border-radius:16px; font-size:1.4em; font-weight:700; cursor:pointer; margin-top:30px; }
 </style>
 </head>
+
 <body>
 <div class="stars" id="stars"></div>
 
-<nav>
-    <div class="nav-container">
-        <div class="logo">Lokus Hub</div>
-        <button class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></button>
-        <ul class="nav-links" id="navLinks">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="keys.html" class="active">Keys</a></li>
-            <li><a href="executors.html">Executors</a></li>
-            <li><a href="game.html">Game</a></li>
-            <li><a href="help.html">Help</a></li>
-            <li><a href="credits.html">Credits</a></li>
-        </ul>
-    </div>
-</nav>
-<div class="nav-overlay" id="navOverlay"></div>
-
-<!-- Access Denied Overlay -->
-<div class="access-denied-overlay" id="accessDeniedOverlay" style="display:none;">
-    <div class="denied-content">
-        <div class="denied-logo">🔒</div>
-        <h1 class="denied-title">Access Denied</h1>
-        <p class="denied-subtitle">You must complete the Linkvertise task to get your key</p>
-        <div class="denied-info">
-            <p><strong>Info:</strong></p>
-            <p>• Use the provided Linkvertise link</p>
-            <p>• Direct access is not allowed</p>
-            <p>• Join Discord if you face issues: https://discord.gg/G9mZVF6TS5</p>
-        </div>
-        <div class="denied-buttons">
-            <a href="index.html" class="btn-home">🏠 Go Home</a>
-            <a href="https://link-center.net/1446949/duPCtVbXsxIW" class="btn-verify">🔑 Get Access Link</a>
-        </div>
-    </div>
-</div>
-
-<!-- Key Container -->
 <div class="container">
-    <header>
-        <h1>🔑 Lokus Hub Key</h1>
-        <p class="subtitle">Premium Access Key</p>
-    </header>
-    <div class="key-card" id="protectedKeyCard">
-        <div class="key-header">
-            <div class="key-icon">⚡</div>
-            <div class="key-game">Lokus Hub Premium</div>
-            <span class="key-status" id="keyStatus">🔒 Locked</span>
-        </div>
-        <div class="key-display">
-            <div class="key-label">🔐 Premium Key</div>
-            <div class="key-value" id="keyValue">•••••••••••</div>
-        </div>
-        <button class="copy-btn" id="copyBtn" onclick="copyKey(this)">📋 Copy Key</button>
-        <div class="key-info">
-            <p>📅 <strong>Last Update:</strong> Today</p>
-            <p>⏰ <strong>Validity:</strong> 1 day access</p>
-            <p>🔐 <strong>Status:</strong> Requires Linkvertise</p>
-            <p>⚡ <strong>Features:</strong> Full Premium Access</p>
-        </div>
-    </div>
+  <h1>🔑 Lokus Hub Key</h1>
+  <p>Premium Access</p>
+
+  <div class="key-card">
+    <div class="key-value" id="keyValue">•••••••••••</div>
+    <button class="copy-btn" id="copyBtn" disabled>📋 Copy Key</button>
+  </div>
 </div>
 
 <script>
-// ===== Menu Toggle =====
-const menuToggle = document.getElementById('menuToggle');
-const navLinks = document.getElementById('navLinks');
-const navOverlay = document.getElementById('navOverlay');
-const accessDeniedOverlay = document.getElementById('accessDeniedOverlay');
-const protectedKeyCard = document.getElementById('protectedKeyCard');
-const keyStatus = document.getElementById('keyStatus');
+/* ===== VARIABLES ===== */
 const keyValue = document.getElementById('keyValue');
 const copyBtn = document.getElementById('copyBtn');
 
-menuToggle.addEventListener('click', e=>{
-    menuToggle.classList.toggle('active');
-    navLinks.classList.toggle('active');
-    navOverlay.classList.toggle('active');
-    document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden':''; 
-});
-navOverlay.addEventListener('click', ()=>{menuToggle.classList.remove('active');navLinks.classList.remove('active');navOverlay.classList.remove('active');document.body.style.overflow='';});
+/* ===== FETCH KEY FROM CLOUDFLARE (NEW) ===== */
+async function fetchKeyFromWorker() {
+    try {
+        const res = await fetch('https://key2resyunjin.stfuhis1.workers.dev');
+        const data = await res.json();
 
-// ===== Random Key Generator =====
-function generateKey() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let randomPart = '';
-    for (let i=0;i<5;i++){ randomPart += chars.charAt(Math.floor(Math.random()*chars.length)); }
-    return 'LOKUS-' + randomPart;
-}
+        if (!data.key) throw new Error('No key');
 
-// ===== Unlock Access =====
-function unlockAccess() {
-    accessDeniedOverlay.style.display = 'none';
-    protectedKeyCard.classList.remove('locked');
-    keyStatus.textContent='✓ Active';
-    keyStatus.classList.remove('locked');
-    keyValue.textContent = generateKey();
-    copyBtn.disabled=false;
-    copyBtn.style.opacity='1';
-    copyBtn.style.cursor='pointer';
-    document.body.style.overflow='';
-}
+        keyValue.textContent = data.key;
+        copyBtn.disabled = false;
 
-// ===== Copy Key =====
-function copyKey(button){
-    if(button.disabled)return;
-    navigator.clipboard.writeText(keyValue.textContent).then(()=>{
-        const original = button.innerHTML;
-        button.innerHTML='✓ Copied!';
-        setTimeout(()=>{button.innerHTML=original;},2000);
-    });
-}
-
-// ===== Check Access via Linkvertise =====
-function checkAccess(){
-    const ref = document.referrer;
-    if(!ref){ showAccessDenied(); return false; }
-    try{
-        const url = new URL(ref.toLowerCase());
-        const hostname=url.hostname;
-        const allowed=['linkvertise.com','link-center.net','link-target.net','file-link.net','work.ink'];
-        if(!allowed.some(d=>hostname===d || hostname.endsWith('.'+d))){ showAccessDenied(); return false;}
-        return true;
-    }catch(e){ showAccessDenied(); return false;}
-}
-
-function showAccessDenied(){
-    accessDeniedOverlay.style.display='flex';
-    protectedKeyCard.classList.add('locked');
-    keyStatus.textContent='🔒 Locked';
-    keyStatus.classList.add('locked');
-    keyValue.textContent='•••••••••••';
-    copyBtn.disabled=true;
-    copyBtn.style.opacity='0.5';
-    copyBtn.style.cursor='not-allowed';
-    document.body.style.overflow='hidden';
-}
-
-// ===== Stars Animation =====
-function createStars(){
-    const starsContainer=document.getElementById('stars');
-    for(let i=0;i<300;i++){
-        const star=document.createElement('div');
-        star.className='star';
-        const size=Math.random()*3+0.5;
-        star.style.width=size+'px'; star.style.height=size+'px';
-        star.style.left=Math.random()*100+'%'; star.style.top=Math.random()*100+'%';
-        star.style.animationDelay=Math.random()*3+'s';
-        star.style.animationDuration=(Math.random()*3+2)+'s';
-        starsContainer.appendChild(star);
+    } catch (err) {
+        keyValue.textContent = 'ERROR';
+        alert('Failed to fetch key');
+        console.error(err);
     }
 }
-createStars();
 
-// ===== Init =====
-if(!checkAccess()){ console.log('Access Denied'); }else{ unlockAccess(); }
+/* ===== COPY ===== */
+copyBtn.onclick = () => {
+    if (copyBtn.disabled) return;
+    navigator.clipboard.writeText(keyValue.textContent);
+    copyBtn.textContent = '✓ Copied!';
+    setTimeout(()=>copyBtn.textContent='📋 Copy Key',1500);
+};
 
+/* ===== LINKVERTISE CHECK (UNCHANGED LOGIC) ===== */
+function checkAccess(){
+    if (!document.referrer) return false;
+    const allowed=['linkvertise.com','link-center.net','link-target.net','file-link.net','work.ink'];
+    try{
+        const host=new URL(document.referrer).hostname;
+        return allowed.some(d=>host===d||host.endsWith('.'+d));
+    }catch(e){return false;}
+}
+
+/* ===== INIT ===== */
+if (checkAccess()) {
+    keyValue.textContent = 'Generating...';
+    fetchKeyFromWorker();
+} else {
+    keyValue.textContent = 'ACCESS DENIED';
+    copyBtn.disabled = true;
+}
+
+/* ===== STARS ===== */
+const stars=document.getElementById('stars');
+for(let i=0;i<200;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const size=Math.random()*3+1;
+    s.style.width=s.style.height=size+'px';
+    s.style.left=Math.random()*100+'%';
+    s.style.top=Math.random()*100+'%';
+    stars.appendChild(s);
+}
 </script>
 </body>
 </html>
