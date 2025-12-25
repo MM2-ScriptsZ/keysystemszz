@@ -1,270 +1,701 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lokus Hub - Keys</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lokus Hub 🔑 Key System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-<style>
-/* ===== ORIGINAL CSS — UNCHANGED ===== */
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Segoe UI', sans-serif; background:#000; color:#fff; min-height:100vh; overflow-x:hidden; }
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            color: white;
+        }
 
-/* Stars */
-.stars { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
-.star { position:absolute; background:#fff; border-radius:50%; animation:twinkle 3s infinite; }
-@keyframes twinkle { 0%,100%{opacity:0.2;} 50%{opacity:1;} }
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
 
-/* Container */
-.container{ max-width:900px; margin:0 auto; padding:140px 40px 60px; position:relative; z-index:1; }
-.key-card{ background:rgba(0,0,0,0.8); border:2px solid rgba(255,255,255,0.15); border-radius:28px; padding:60px; }
-.key-value{ font-family:monospace; font-size:2em; letter-spacing:4px; }
-.copy-btn{ width:100%; background:#fff; color:#000; border:none; padding:22px; border-radius:16px; font-size:1.4em; font-weight:700; cursor:pointer; margin-top:30px; }
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            animation: float 15s infinite linear;
+        }
 
-/* Error styling */
-.error { color: #ff4444; }
-.success { color: #44ff44; }
-</style>
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 0.8; }
+            100% { transform: translateY(0) rotate(360deg); opacity: 0.5; }
+        }
+
+        /* Main Container */
+        .container {
+            background: rgba(15, 15, 35, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Glowing Border */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8);
+            z-index: -1;
+            border-radius: 22px;
+            animation: glow 3s linear infinite;
+            background-size: 400%;
+            filter: blur(10px);
+            opacity: 0.5;
+        }
+
+        @keyframes glow {
+            0% { background-position: 0 0; }
+            50% { background-position: 400% 0; }
+            100% { background-position: 0 0; }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00ffaa, #00aaff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #fff, #a0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #a0e7ff;
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* Key Display */
+        .key-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid rgba(0, 170, 255, 0.3);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .key-container:hover {
+            border-color: rgba(0, 170, 255, 0.6);
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.2);
+        }
+
+        .key-label {
+            font-size: 1rem;
+            color: #a0e7ff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .key-label i {
+            font-size: 1.2rem;
+        }
+
+        .key-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            font-family: 'Courier New', monospace;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: break-all;
+            transition: all 0.3s ease;
+        }
+
+        .key-value.ready {
+            color: #00ffaa;
+            text-shadow: 0 0 10px rgba(0, 255, 170, 0.5);
+        }
+
+        .key-value.error {
+            color: #ff5555;
+            text-shadow: 0 0 10px rgba(255, 85, 85, 0.5);
+        }
+
+        .key-value.loading {
+            color: #ffaa00;
+        }
+
+        /* Buttons */
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #0066ff, #00aaff);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #0055ee, #0099ee);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 102, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #00cc88, #00ffaa);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(45deg, #00bb77, #00ee99);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 204, 136, 0.4);
+        }
+
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.6;
+        }
+
+        /* Status */
+        .status {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .status.success {
+            background: rgba(0, 255, 170, 0.1);
+            color: #00ffaa;
+            border: 1px solid rgba(0, 255, 170, 0.3);
+        }
+
+        .status.error {
+            background: rgba(255, 85, 85, 0.1);
+            color: #ff5555;
+            border: 1px solid rgba(255, 85, 85, 0.3);
+        }
+
+        .status.warning {
+            background: rgba(255, 170, 0, 0.1);
+            color: #ffaa00;
+            border: 1px solid rgba(255, 170, 0, 0.3);
+        }
+
+        .status.loading {
+            background: rgba(0, 170, 255, 0.1);
+            color: #00aaff;
+            border: 1px solid rgba(0, 170, 255, 0.3);
+        }
+
+        /* Linkvertise Box */
+        .linkvertise-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 170, 0, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 170, 0, 0.3);
+            text-align: center;
+        }
+
+        .linkvertise-box h3 {
+            color: #ffaa00;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .linkvertise-box p {
+            color: #ffcc66;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .linkvertise-link {
+            display: inline-block;
+            background: linear-gradient(45deg, #ffaa00, #ffcc00);
+            color: #000;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .linkvertise-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 170, 0, 0.4);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #a0a0ff;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+        }
+
+        /* Loading Animation */
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #00ffaa;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .key-value {
+                font-size: 1.8rem;
+                min-height: 70px;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .key-value {
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+            }
+            
+            .btn {
+                padding: 15px;
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
-
 <body>
-<div class="stars" id="stars"></div>
+    <!-- Animated Background -->
+    <div class="bg-animation" id="bgAnimation"></div>
 
-<div class="container">
-  <h1>🔑 Lokus Hub Key</h1>
-  <p>Premium Access</p>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🔑</div>
+            <h1 class="title">Lokus Hub Key System</h1>
+            <p class="subtitle">Premium Access • One Key Per Completion</p>
+        </div>
 
-  <div class="key-card">
-    <div class="key-value" id="keyValue">•••••••••••</div>
-    <button class="copy-btn" id="copyBtn" disabled>📋 Copy Key</button>
-    
-    <div style="margin-top: 20px; text-align: center;">
-      <p id="statusText">Checking access...</p>
-      <p id="referrerInfo" style="font-size: 12px; color: #888; margin-top: 10px;"></p>
+        <!-- Key Display -->
+        <div class="key-container">
+            <div class="key-label">
+                <i class="fas fa-key"></i> YOUR UNIQUE KEY
+            </div>
+            <div class="key-value" id="keyValue">
+                Complete Linkvertise to generate key
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="status" id="status">
+            Ready to generate your key
+        </div>
+
+        <!-- Buttons -->
+        <div class="buttons">
+            <button class="btn btn-primary" id="generateBtn">
+                <i class="fas fa-bolt"></i> GENERATE KEY
+            </button>
+            <button class="btn btn-secondary" id="copyBtn" disabled>
+                <i class="far fa-copy"></i> COPY KEY
+            </button>
+        </div>
+
+        <!-- Linkvertise Box -->
+        <div class="linkvertise-box">
+            <h3><i class="fas fa-exclamation-circle"></i> IMPORTANT</h3>
+            <p>You must complete the Linkvertise to generate a key. Each completion grants one key only.</p>
+            <a href="https://linkvertise.com/1446949/duPCtVbXsxIW?o=sharing" target="_blank" class="linkvertise-link">
+                <i class="fas fa-external-link-alt"></i> COMPLETE LINKVERTISE
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Lokus Hub • Secure Key System • © 2024</p>
+            <p style="margin-top: 5px; font-size: 0.8rem;">Keys expire after 24 hours</p>
+        </div>
     </div>
-  </div>
-  
-  <div style="margin-top: 30px; text-align: center;">
-    <p>If you haven't completed the Linkvertise, click here:</p>
-    <a href="https://linkvertise.com/1446949/duPCtVbXsxIW?o=sharing" 
-       target="_blank" 
-       style="color: #00aaff; text-decoration: none; font-weight: bold; font-size: 1.2em;">
-       🔗 Complete Linkvertise to get key
-    </a>
-  </div>
-</div>
 
-<script>
-/* ===== VARIABLES ===== */
-const keyValue = document.getElementById('keyValue');
-const copyBtn = document.getElementById('copyBtn');
-const statusText = document.getElementById('statusText');
-const referrerInfo = document.getElementById('referrerInfo');
+    <script>
+        // Configuration
+        const CONFIG = {
+            WORKER_URL: 'https://key2resyunjin.stfuhis1.workers.dev',
+            STORAGE_KEY: 'lokus_hub_key_data',
+            MAX_RETRIES: 3,
+            RETRY_DELAY: 1000
+        };
 
-/* ===== CHECK LINKVERTISE ACCESS ===== */
-function checkLinkvertiseAccess() {
-    // Show referrer for debugging
-    const referrer = document.referrer;
-    referrerInfo.textContent = `Referrer: ${referrer || 'No referrer detected'}`;
-    
-    // List of ALL possible Linkvertise domains
-    const linkvertiseDomains = [
-        'linkvertise.com',
-        'linkvertise.net',
-        'link-target.net',
-        'up-to-down.net',
-        'direct-link.net',
-        'link-center.net',
-        'file-link.net',
-        'link-to.net',
-        'link-hub.net',
-        'link-collector.com'
-    ];
-    
-    // If no referrer, deny access
-    if (!referrer) {
-        statusText.textContent = "❌ No referrer detected. Please complete the Linkvertise first.";
-        statusText.className = "error";
-        return false;
-    }
-    
-    try {
-        const url = new URL(referrer);
-        const hostname = url.hostname.toLowerCase();
-        
-        // Check if the referrer matches any Linkvertise domain
-        const isLinkvertise = linkvertiseDomains.some(domain => 
-            hostname === domain || 
-            hostname.endsWith('.' + domain)
-        );
-        
-        if (isLinkvertise) {
-            statusText.textContent = "✅ Access granted! Generating key...";
-            statusText.className = "success";
-            return true;
-        } else {
-            statusText.textContent = `❌ Invalid referrer: ${hostname}`;
-            statusText.className = "error";
-            return false;
-        }
-        
-    } catch (e) {
-        statusText.textContent = "❌ Error checking referrer. Please try again.";
-        statusText.className = "error";
-        return false;
-    }
-}
+        // DOM Elements
+        const elements = {
+            keyValue: document.getElementById('keyValue'),
+            generateBtn: document.getElementById('generateBtn'),
+            copyBtn: document.getElementById('copyBtn'),
+            status: document.getElementById('status'),
+            bgAnimation: document.getElementById('bgAnimation')
+        };
 
-/* ===== FETCH KEY FROM CLOUDFLARE ===== */
-async function fetchKeyFromWorker() {
-    try {
-        // Add timestamp to prevent caching
-        const timestamp = new Date().getTime();
-        const res = await fetch(`https://key2resyunjin.stfuhis1.workers.dev?t=${timestamp}`);
-        
-        if (!res.ok) {
-            throw new Error(`Worker responded with status: ${res.status}`);
-        }
-        
-        const data = await res.json();
+        // State
+        let currentKey = '';
+        let isGenerating = false;
 
-        if (!data.key) {
-            throw new Error('No key in response');
+        // Initialize Background Animation
+        function initBackground() {
+            for (let i = 0; i < 20; i++) {
+                const circle = document.createElement('div');
+                circle.className = 'bg-circle';
+                const size = Math.random() * 100 + 50;
+                circle.style.width = `${size}px`;
+                circle.style.height = `${size}px`;
+                circle.style.left = `${Math.random() * 100}%`;
+                circle.style.top = `${Math.random() * 100}%`;
+                circle.style.animationDuration = `${Math.random() * 20 + 10}s`;
+                circle.style.animationDelay = `${Math.random() * 5}s`;
+                elements.bgAnimation.appendChild(circle);
+            }
         }
 
-        keyValue.textContent = data.key;
-        keyValue.className = "key-value success";
-        copyBtn.disabled = false;
-        copyBtn.style.background = "#44ff44";
-        copyBtn.style.color = "#000";
-        
-        statusText.textContent = "✅ Key generated successfully!";
-        statusText.className = "success";
-
-    } catch (err) {
-        keyValue.textContent = 'ERROR';
-        keyValue.className = "key-value error";
-        copyBtn.disabled = true;
-        copyBtn.style.background = "#ff4444";
-        
-        statusText.textContent = "❌ Failed to fetch key. Please try again later.";
-        statusText.className = "error";
-        
-        console.error('Error fetching key:', err);
-        
-        // Show alternative
-        const fallbackKey = "LOKUS-" + Math.random().toString(36).substr(2, 8).toUpperCase();
-        keyValue.textContent = fallbackKey;
-        copyBtn.disabled = false;
-        copyBtn.style.background = "#ffaa00";
-        copyBtn.textContent = "📋 Copy (Fallback)";
-    }
-}
-
-/* ===== COPY FUNCTION ===== */
-copyBtn.onclick = () => {
-    if (copyBtn.disabled) return;
-    
-    navigator.clipboard.writeText(keyValue.textContent)
-        .then(() => {
-            copyBtn.textContent = '✓ Copied!';
-            copyBtn.style.background = "#44ff44";
+        // Update Status
+        function updateStatus(message, type = 'info') {
+            elements.status.textContent = message;
+            elements.status.className = `status ${type}`;
             
-            setTimeout(() => {
-                copyBtn.textContent = '📋 Copy Key';
-                copyBtn.style.background = "#fff";
-            }, 2000);
-        })
-        .catch(err => {
-            console.error('Copy failed:', err);
-            copyBtn.textContent = '❌ Copy Failed';
-            copyBtn.style.background = "#ff4444";
+            if (type === 'loading') {
+                elements.status.innerHTML = `<span class="loader"></span> ${message}`;
+            }
+        }
+
+        // Update Key Display
+        function updateKeyDisplay(key, type = 'default') {
+            elements.keyValue.textContent = key;
+            elements.keyValue.className = `key-value ${type}`;
+            currentKey = key;
+        }
+
+        // Save to Local Storage
+        function saveToStorage(key) {
+            const data = {
+                key: key,
+                timestamp: Date.now(),
+                expires: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+            };
+            localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(data));
+        }
+
+        // Load from Local Storage
+        function loadFromStorage() {
+            const stored = localStorage.getItem(CONFIG.STORAGE_KEY);
+            if (!stored) return null;
             
-            setTimeout(() => {
-                copyBtn.textContent = '📋 Copy Key';
-                copyBtn.style.background = "#fff";
-            }, 2000);
+            try {
+                const data = JSON.parse(stored);
+                if (Date.now() < data.expires) {
+                    return data.key;
+                } else {
+                    localStorage.removeItem(CONFIG.STORAGE_KEY);
+                    return null;
+                }
+            } catch {
+                localStorage.removeItem(CONFIG.STORAGE_KEY);
+                return null;
+            }
+        }
+
+        // Generate Key from Worker
+        async function generateKey(retryCount = 0) {
+            if (isGenerating) return;
+            
+            isGenerating = true;
+            elements.generateBtn.disabled = true;
+            updateKeyDisplay('Generating...', 'loading');
+            updateStatus('Checking Linkvertise access...', 'loading');
+            
+            try {
+                const response = await fetch(`${CONFIG.WORKER_URL}/generate`, {
+                    method: 'GET',
+                    headers: {
+                        'Referer': document.referrer
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Success
+                    updateKeyDisplay(data.key, 'ready');
+                    updateStatus(`✅ Key generated! Expires in ${data.expires_in}`, 'success');
+                    elements.copyBtn.disabled = false;
+                    saveToStorage(data.key);
+                    
+                    // Auto-copy after delay
+                    setTimeout(() => copyKey(), 500);
+                    
+                } else if (data.error) {
+                    // Error from worker
+                    updateKeyDisplay('ACCESS DENIED', 'error');
+                    
+                    let errorMsg = `❌ ${data.message}`;
+                    if (data.required_referrer) {
+                        errorMsg += `\nYour referrer: ${data.your_referrer || 'none'}`;
+                    }
+                    
+                    updateStatus(errorMsg, 'error');
+                    
+                    // If no referrer, guide user
+                    if (!document.referrer) {
+                        updateStatus('Please complete Linkvertise first, then refresh this page.', 'warning');
+                    }
+                    
+                } else {
+                    throw new Error('Invalid server response');
+                }
+                
+            } catch (error) {
+                console.error('Generation error:', error);
+                
+                if (retryCount < CONFIG.MAX_RETRIES) {
+                    // Retry
+                    updateStatus(`Retrying... (${retryCount + 1}/${CONFIG.MAX_RETRIES})`, 'warning');
+                    await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY * (retryCount + 1)));
+                    return generateKey(retryCount + 1);
+                } else {
+                    // Max retries reached
+                    updateKeyDisplay('SERVER ERROR', 'error');
+                    updateStatus('❌ Failed to connect. Please try again later.', 'error');
+                }
+            } finally {
+                isGenerating = false;
+                elements.generateBtn.disabled = false;
+            }
+        }
+
+        // Copy Key to Clipboard
+        async function copyKey() {
+            if (!currentKey) return;
+            
+            try {
+                await navigator.clipboard.writeText(currentKey);
+                
+                // Visual feedback
+                const originalText = elements.copyBtn.innerHTML;
+                elements.copyBtn.innerHTML = '<i class="fas fa-check"></i> COPIED!';
+                elements.copyBtn.style.background = 'linear-gradient(45deg, #00cc88, #00ffaa)';
+                
+                updateStatus('Key copied to clipboard!', 'success');
+                
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    elements.copyBtn.innerHTML = originalText;
+                    elements.copyBtn.style.background = '';
+                }, 2000);
+                
+            } catch (error) {
+                // Fallback method
+                const textArea = document.createElement('textarea');
+                textArea.value = currentKey;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                updateStatus('Key copied (fallback method)', 'warning');
+            }
+        }
+
+        // Check Referrer
+        function isValidReferrer() {
+            const referrer = document.referrer;
+            if (!referrer) return false;
+            
+            const linkvertiseDomains = [
+                'linkvertise.com',
+                'linkvertise.net',
+                'link-target.net',
+                'up-to-down.net',
+                'direct-link.net'
+            ];
+            
+            return linkvertiseDomains.some(domain => referrer.includes(domain));
+        }
+
+        // Initialize Page
+        function initPage() {
+            // Check for existing key
+            const existingKey = loadFromStorage();
+            if (existingKey) {
+                updateKeyDisplay(existingKey, 'ready');
+                updateStatus('✅ Using previously generated key', 'success');
+                elements.copyBtn.disabled = false;
+                return;
+            }
+            
+            // Check referrer
+            if (!isValidReferrer()) {
+                updateKeyDisplay('NO ACCESS', 'error');
+                updateStatus('Please complete Linkvertise to generate a key', 'warning');
+                return;
+            }
+            
+            // Auto-generate if referrer is valid
+            generateKey();
+        }
+
+        // Event Listeners
+        elements.generateBtn.addEventListener('click', () => {
+            if (!isValidReferrer()) {
+                updateStatus('❌ Please complete Linkvertise first', 'error');
+                return;
+            }
+            generateKey();
         });
-};
-
-/* ===== INITIALIZE PAGE ===== */
-function initializePage() {
-    // First check if user came from Linkvertise
-    const hasAccess = checkLinkvertiseAccess();
-    
-    if (hasAccess) {
-        // Fetch key from Cloudflare Worker
-        fetchKeyFromWorker();
-    } else {
-        keyValue.textContent = 'ACCESS DENIED';
-        keyValue.className = "key-value error";
-        copyBtn.disabled = true;
-        copyBtn.style.background = "#ff4444";
         
-        // Show message to complete Linkvertise
-        setTimeout(() => {
-            statusText.innerHTML = `Please complete the Linkvertise first.<br>
-                                   <a href="https://linkvertise.com/1446949/duPCtVbXsxIW?o=sharing" 
-                                      target="_blank" 
-                                      style="color: #00aaff; text-decoration: underline;">
-                                      Click here to complete Linkvertise
-                                   </a>`;
-        }, 2000);
-    }
-}
+        elements.copyBtn.addEventListener('click', copyKey);
 
-/* ===== CREATE STARS BACKGROUND ===== */
-function createStars() {
-    const stars = document.getElementById('stars');
-    for(let i = 0; i < 200; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        const size = Math.random() * 3 + 1;
-        star.style.width = star.style.height = size + 'px';
-        star.style.left = Math.random() * 100 + '%';
-        star.style.top = Math.random() * 100 + '%';
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initBackground();
+            initPage();
+            
+            // Prevent right-click
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                updateStatus('Right-click disabled to protect the system', 'warning');
+                return false;
+            });
+            
+            // Prevent F12, Ctrl+Shift+I, Ctrl+U
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+                    (e.ctrlKey && e.key === 'u')) {
+                    e.preventDefault();
+                    updateStatus('Developer tools are disabled', 'warning');
+                    return false;
+                }
+            });
+        });
+
+        // Auto-refresh if no referrer but user might have completed Linkvertise
+        let refreshAttempts = 0;
+        const maxRefreshChecks = 10;
         
-        // Random animation delay
-        star.style.animationDelay = Math.random() * 3 + 's';
-        star.style.animationDuration = Math.random() * 2 + 2 + 's';
+        function checkForReferrerRefresh() {
+            if (!document.referrer && refreshAttempts < maxRefreshChecks) {
+                refreshAttempts++;
+                setTimeout(checkForReferrerRefresh, 1000);
+            } else if (document.referrer && !currentKey) {
+                // Referrer appeared, generate key
+                generateKey();
+            }
+        }
         
-        stars.appendChild(star);
-    }
-}
-
-/* ===== START EVERYTHING ===== */
-document.addEventListener('DOMContentLoaded', function() {
-    createStars();
-    
-    // Small delay before checking to ensure referrer is loaded
-    setTimeout(initializePage, 100);
-});
-
-/* ===== REFRESH BUTTON (optional) ===== */
-// Add this button to your HTML if you want:
-// <button id="refreshBtn" style="margin-top: 10px;">🔄 Refresh</button>
-document.addEventListener('DOMContentLoaded', function() {
-    // Create refresh button
-    const refreshBtn = document.createElement('button');
-    refreshBtn.id = 'refreshBtn';
-    refreshBtn.textContent = '🔄 Refresh Page';
-    refreshBtn.style.cssText = `
-        margin: 20px auto;
-        display: block;
-        background: #333;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        cursor: pointer;
-    `;
-    
-    refreshBtn.onclick = () => {
-        window.location.reload();
-    };
-    
-    document.querySelector('.container').appendChild(refreshBtn);
-});
-</script>
+        // Start checking for referrer updates
+        setTimeout(checkForReferrerRefresh, 1000);
+    </script>
 </body>
 </html>
